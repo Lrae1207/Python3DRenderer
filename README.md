@@ -11,7 +11,12 @@ left ctrl to croutch, left shift to run
 
 Demo/Development Media:
 
-Progress as of 25/11/2023:
+Progress as of 25/11/2023 on Main:
 Windows 10 OS:
 ![alt text](https://github.com/Lrae1207/Python3DRenderer-OptimizationPrototype/blob/main/images/Dev-Early0.png?raw=true)
 ![alt text](https://github.com/Lrae1207/Python3DRenderer-OptimizationPrototype/blob/main/images/Dev-Early1.png?raw=true)
+
+Progress as of 25/11/2023 on Minecraft Branch:
+Windows 10 OS:
+![alt text](images/BlockPlacement-Early0.png)
+![alt text](images/Performance-Drop.png)
