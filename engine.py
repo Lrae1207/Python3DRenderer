@@ -82,10 +82,19 @@ class Vector2:
 
     def to_tuple(self):
         return (self.x, self.y)
-  
+
 class BoxCollider:
+    isActive = True
     isTouched = False
+    collisions = []
     vertices = (Vector3(0,0,0),Vector3(0,0,0),Vector3(0,0,0),Vector3(0,0,0),Vector3(0,0,0),Vector3(0,0,0))
+                                                                                                                                                                                                              
+class Object:
+    collider = BoxCollider()
+
+class Collision:
+    epicenter = Vector3(0,0,0)
+    otherCollider = None
 
 # Represents the data of an object that the engine needs to process
 class Transform:
@@ -94,6 +103,14 @@ class Transform:
     scale = Vector3(0,0,0)
     collider = BoxCollider()
 
+class CollisionManager:
+    colliders = []
+    def calculateCollisions(self):
+        for collider in self.colliders:
+            collider.collisions = []
+            # Calculate collisions
+
+
 class Engine:
     transforms = []
     colliders = []
@@ -101,5 +118,3 @@ class Engine:
     def __init__(self):
         for t in self.transforms:
             self.colliders.append(t.collider)
-
-    
