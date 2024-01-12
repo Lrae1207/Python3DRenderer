@@ -10,17 +10,17 @@ then
     if [ $input = "yes" ] || [ $input = "Yes" ] || [ $input = "y" ] || [ $input = "Y" ]
     then
         echo "Downloading python3"
-        sudo apt install python3
+        sudo apt install python3 -y
     else
         echo "Dependency download failed."
-        exit 0
+        exit 1
     fi
 fi
 
 # Check for pip
 echo "Downloading pip"
-sudo apt install python3-pip
+sudo apt install python3-pip -y
 echo "Downloading python dependencies..."
-sudo apt install python3-pygame
-sudo apt install python3-pillow
+sudo apt install python3-pygame -y
+sudo apt install python3-pillow -y
 echo "Done."
