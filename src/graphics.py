@@ -2,6 +2,7 @@ import pygame
 import math
 import time
 import os
+import platform
 from PIL import Image
 from ctypes import *
 
@@ -234,7 +235,7 @@ def copy_obj (id, new_id, list, new_list):
         new_list.append(Object(new_id, obj.position, obj.orientation, obj.origin, obj.scale, obj.wire_thickness, obj.visible, obj.transparent, obj.static, obj.vertices, obj.faces))
 
 class Graphics:
-    graphics_accel = CDLL
+    graphics_accel = None
 
     rendered_faces = 0
     rendered_objects = 0
@@ -260,10 +261,14 @@ class Graphics:
 
     def __init__(self,window):
         self.window = window
+        if platform.system() == "Linux": # SO only works on linux
+            graphics_accel = CDLL("./accel-linux/graphics.so")
     
     def accel_shoelace(self,pts):
         x,y = zip(*pts)
-        return self.graphics_accel.shoelace(x,y)
+        if platform.system() == "Linux":
+            return self.graphics_accel.shoelace(x,y) # No clue if this actually works 
+        return shoelace(pts)
 
     def apply_changes (self, obj, vertex):
         x, y, z = vertex.x, vertex.y, vertex.z
@@ -354,7 +359,7 @@ class Graphics:
                                     offscreen = False
                                 planepts.append(Vector3(x, y, z))
 
-                            area = shoelace(points)
+                            area = self.accel_shoelace(points)
                             if (area > 0) & (show & (not offscreen)):
                                 dist_from_center = math.sqrt(points[0][0] * points[0][0] + points[0][1] * points[0][1])
                                 distance = math.sqrt((light.position.x - planepts[0].x)*(light.position.x - planepts[0].x) + (light.position.y - planepts[0].y)*(light.position.y - planepts[0].y) + (light.position.z - planepts[0].z)*(light.position.z - planepts[0].z))
