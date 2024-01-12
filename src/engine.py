@@ -248,7 +248,8 @@ class CollisionManager:
         relevant_x_ids = []
         relevant_y_ids = []
         relevant_z_ids = []
-        for x,y,z in xpoints,ypoints,zpoints:
+
+        for x in xpoints:
             if x[1] in relevant_x_ids: # If the id of the current point is the "end point" (has a higher value along the axis)
                 relevant_x_ids.remove(x[1])
             else: # If the id of the current point is the "start point" (has a lower value along the axis)
@@ -259,7 +260,8 @@ class CollisionManager:
                     collision_pairs.append((id,x[1]))
                 else:
                     collision_pairs.append((x[1],id))
-            
+
+        for y in ypoints:
             if y[1] in relevant_y_ids: # If the id of the current point is the "end point" (has a higher value along the axis)
                 relevant_y_ids.remove(y[1])
             else: # If the id of the current point is the "start point" (has a lower value along the axis)
@@ -271,6 +273,7 @@ class CollisionManager:
                 else:
                     collision_pairs.append((y[1],id))
 
+        for z in zpoints:
             if z[1] in relevant_z_ids: # If the id of the current point is the "end point" (has a higher value along the axis)
                 relevant_z_ids.remove(z[1])
             else: # If the id of the current point is the "start point" (has a lower value along the axis)
@@ -282,7 +285,7 @@ class CollisionManager:
                 else:
                     collision_pairs.append((z[1],id))
 
-        return list(set(collision_pairs))
+        return list(set(collision_pairs)) # Remove duplicates
 
 
 
