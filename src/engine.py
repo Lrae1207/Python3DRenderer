@@ -1,6 +1,7 @@
 import math
 import os
 import pygame
+from pygame.locals import *
 import json
 import time
 import graphics
@@ -340,7 +341,7 @@ class Engine:
         self.clock = pygame.time.Clock()
 
         pygame.display.set_caption('Python (Pygame) - 3D Renderer')
-        pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_CROSSHAIR)
+        pygame.mouse.set_cursor(*pygame.cursors.arrow)
         pygame.mouse.set_visible(False)
 
         self.cam.drag = 0.8 # Actual camera drag
