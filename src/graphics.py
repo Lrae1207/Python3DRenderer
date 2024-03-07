@@ -5,140 +5,10 @@ import os
 import platform
 from PIL import Image
 from ctypes import *
-
-# Class definitions
-def rotate2D(x,y,r):
-    return x * math.cos(r) - y * math.sin(r), x * math.sin(r) + y * math.cos(r)
-
-# Triple tuple representing 3d coordinates, 3d rotation, 3d movement, etc.
-class Vector3:
-    x, y, z = 0, 0, 0
-
-    def __init__(self, x, y=0, z=0):
-        if (type(x) is int) | (type(x) is float):
-            self.x, self.y, self.z = x, y, z
-        elif type(x) is tuple:
-            self.x, self.y, self.z = x[0], x[1], x[2]
-
-    def to_tuple(self):
-        return (self.x, self.y, self.z)
+import fundamentals as base
     
-    # Returns (x1-x2,y1-y2,z1-z2)
-    def subtract_by_vector(self,v3,set_this_vector):
-        v = Vector3(self.x-v3.x,self.y-v3.y,self.z-v3.z)
-        if set_this_vector:
-            self = v
-        return v
-    
-    # Returns (x1+x2,y1+y2,z1+z2)
-    def add_by_vector(self,v3,set_this_vector):
-        v = Vector3(self.x+v3.x,self.y+v3.y,self.z+v3.z)
-        if set_this_vector:
-            self = v
-        return v
-    
-    # Returns (x1*x2,y1*y2,z1*z2)
-    def multiply_by_vector(self,v3,set_this_vector):
-        v = Vector3(self.x*v3.x,self.y*v3.y,self.z*v3.z)
-        if set_this_vector:
-            self = v
-        return v
-    
-    # Returns (x1/x2,y1/y2,z1/z2)
-    def divide_by_vector(self,v3,set_this_vector):
-        v = Vector3(self.x/v3.x,self.y/v3.y,self.z/v3.z)
-        if set_this_vector:
-            self = v
-        return v
-    
-    # Returns (x1-n,y1-n,z1-n)
-    def subtract_by_num(self,num,set_this_vector):
-        v = Vector3(self.x-num,self.y-num,self.z-num)
-        if set_this_vector:
-            self = v
-        return v
-    
-    # Returns (x1+n,y1+n,z1+n)
-    def add_by_num(self,num,set_this_vector):
-        v = Vector3(self.x+num,self.y+num,self.z+num)
-        if set_this_vector:
-            self = v
-        return v
-    
-    # Returns (x1*n,y1*n,z1*n)
-    def multiply_by_num(self,num,set_this_vector):
-        v = Vector3(self.x*num,self.y*num,self.z*num)
-        if set_this_vector:
-            self = v
-        return v
-    
-    # Returns (x1/n,y1/n,z1/n)
-    def divide_by_num(self,num,set_this_vector):
-        v = Vector3(self.x/num,self.y/num,self.z/num)
-        if set_this_vector:
-            self = v
-        return v
-    
-    def rotate_by_euler(self,rotation):
-        self.y, self.z = rotate2D(self.y, self.z, rotation.x)
-        self.x, self.z = rotate2D(self.x, self.z, rotation.y)
-        self.x, self.y = rotate2D(self.x, self.y, rotation.z)
-
-    def __init__(self, x, y=0, z=0):
-        if (type(x) is int) | (type(x) is float):
-            self.x, self.y, self.z = x, y, z
-        elif type(x) is tuple:
-            self.x, self.y, self.z = x[0], x[1], x[2]
-
-    def to_tuple(self):
-        return (self.x, self.y, self.z)
-    
-    def magnitude (self):
-        return math.sqrt(self.x*self.x + self.y*self.y + self.z*self.z)
-
-# Double tuple representing 2d coordinates, 2d rotation, 2d movement, etc.
-class Vector2:
-    x, y = 0, 0
-
-    def __init__(self, x, y=0):
-        if (type(x) is int) | (type(x) is float):
-            self.x, self.y = x, y
-        elif type(x) is tuple:
-            self.x, self.y = x[0], x[1]
-
-    def to_tuple(self):
-        return (self.x, self.y)
-    
-    def magnitude (self):
-        return math.sqrt(self.x*self.x + self.y*self.y)
-    
-class Screen:
-    full = 0
-    fullwidth = 0
-
-# Represents camera controlled by the cam.velocity
-class Camera:
-    position = Vector3(0,0,0)
-    rotation = Vector3(0,0,0) # x = rotation.y, y = rotation.x, z = roll
-    velocity = Vector3(0,0,0)
-    drag = 0.8
-    air_drag = 0.8
-    focal_length = 400
-
-class RGBColor:
-    r, g, b = 0, 0, 0
-
-    def __init__(self, r, g=0, b=0):
-        if type(r) is int:
-            self.r, self.g, self.b = r, g, b
-        elif type(r) is tuple:
-            self.r, self.g, self.b = r[0], r[1], r[2]
-
-    def to_tuple(self):
-        return(self.r, self.g, self.b)
-
 class Face:
-    color = RGBColor(0, 0, 0)
+    color = base.RGBColor(0, 0, 0)
     indices = (0,0,0)
     shading_color = (0, 0, 0)
     texture = False
@@ -147,53 +17,6 @@ class Face:
         self.indices = indices
         self.color = color
         self.texture = texture
-
-class Object:
-    static = True
-    locked = False
-
-    id = ""
-    type = ""
-    
-    position = Vector3(0,0,0)
-    orientation = Vector3(0, 0, 0)
-    origin = Vector3(0, 0, 0)
-    scale = Vector3(0, 0, 0)
-
-    wire_thickness = 0
-    wire_color = RGBColor(0,0,0)
-
-    visible = True
-    transparent = True
-
-    vertices = [] # List of all points as Vector3 
-    faces = [] # List of all faces as faces
-
-    light_color = RGBColor(0, 0, 0)
-    light_direction = Vector3(0, 0, 0)
-    light_spread = 0
-
-    def __init__ (self, id, type, position, orientation, origin, scale, wire_thickness, visible, transparent, static, vertices, faces, light_color, light_direction, light_spread, textures):
-        self.id = id
-        self.type = type
-        self.position = position
-        self.orientation = orientation
-        self.origin = origin
-        self.scale = scale
-        self.wire_thickness = wire_thickness
-        self.visible = visible
-        self.transparent = transparent
-        self.static = static
-        self.vertices = vertices
-        self.faces = faces
-        self.light_color = light_color
-        self.light_direction = light_direction
-        self.light_spread = light_spread
-        self.textures = textures
-
-    def set_color (self, color): # Set the entire object to a color
-        for face in self.faces:
-            face.color = color
 
 def rel_dir (str):
     if (str[0] == "/") | (str[0] == "."):
@@ -215,32 +38,17 @@ def shoelace (pts):
     return area
 
 def normal (points):
-    ab = Vector3(points[1].x - points[0].x, points[1].y - points[0].y, points[1].z - points[0].z)
-    ac = Vector3(points[2].x - points[0].x, points[2].y - points[0].y, points[2].z - points[0].z)
-    return Vector3(ab.x * ac.x, ab.y * ac.y, ab.z * ac.z)
-
-class find_obj:
-        def by_id (id, list):
-            for obj in list:
-                if obj.id == id:
-                    return list.index(obj)
+    ab = base.Vector3(points[1].x - points[0].x, points[1].y - points[0].y, points[1].z - points[0].z)
+    ac = base.Vector3(points[2].x - points[0].x, points[2].y - points[0].y, points[2].z - points[0].z)
+    return base.CameraVector3(ab.x * ac.x, ab.y * ac.y, ab.z * ac.z)
                 
-        def by_position (pos, list, skip = []):
-            for obj in list:
-                if (obj.position.to_tuple() == pos.to_tuple()) & (obj.id not in skip):
-                    return list.index(obj)
-                
-def copy_obj (id, new_id, list, new_list):
-        obj = list[find_obj.by_id(id)]
-        new_list.append(Object(new_id, obj.position, obj.orientation, obj.origin, obj.scale, obj.wire_thickness, obj.visible, obj.transparent, obj.static, obj.vertices, obj.faces))
-
 class Graphics:
     graphics_accel = None
 
     rendered_faces = 0
     rendered_objects = 0
     textures_path = ""
-    screen = Screen()
+    screen = base.Screen()
     objects = []
     
     bgcolor = (255, 255, 255)
@@ -253,7 +61,7 @@ class Graphics:
     debug_text_buffer = []
 
     clock = None
-    cam = Camera()
+    cam = base.Camera()
     window = None
 
     frame = 0
@@ -283,11 +91,11 @@ class Graphics:
         x, y = rotate_point(x - obj.origin.x, y - obj.origin.y, math.radians(obj.orientation.z))
         
         # Offset
-        x += obj.position.x
-        y += obj.position.y
-        z += obj.position.z
+        x += obj.transform.position.x
+        y += obj.transform.position.y
+        z += obj.transform.position.z
 
-        return Vector3(x, y, z)
+        return base.Vector3(x, y, z)
     
     def perspective (self, position, rotation, vertex):
         x, y, z = vertex.x - position.x, vertex.y - position.y, vertex.z - position.z
@@ -295,7 +103,7 @@ class Graphics:
         x, z = rotate_point(x, z, yaw)
         y, z = rotate_point(y, z, pitch)
         x, y = rotate_point(x, y, roll)
-        return Vector3(x, y, z)
+        return base.Vector3(x, y, z)
     
     def draw_texture (self, facepts, texture, scrn, shading=(1, 1, 1)):
         facepts.sort(key=lambda x: x[1])
@@ -343,7 +151,7 @@ class Graphics:
                                 vert = self.apply_changes(obj, vertex)
                                 x, y, z = vert.x, vert.y, vert.z
 
-                            vertices.append(self.perspective(light.position, light.light_direction, Vector3(x, y, z)))
+                            vertices.append(self.perspective(light.position, light.light_direction, base.Vector3(x, y, z)))
 
                         for face in obj.faces:
                             offscreen = True
@@ -352,15 +160,18 @@ class Graphics:
                             planepts = []
                             for index in face.indices:
                                 x, y, z = vertices[index].x, vertices[index].y, vertices[index].z
-                                if z < 0:
+                                if z <= 0:
                                     show = False
+                                    break
                                 points.append(((x * light.light_spread/z), (-y * light.light_spread/z)))
                                 if (x * light.light_spread/z <= self.window.get_width()) & (y * light.light_spread/z <= self.window.get_height()):
                                     offscreen = False
-                                planepts.append(Vector3(x, y, z))
+                                planepts.append(base.Vector3(x, y, z))
+                            if not show:
+                                continue
 
                             area = self.accel_shoelace(points)
-                            if (area > 0) & (show & (not offscreen)):
+                            if (area > 0) & ((not offscreen)):
                                 dist_from_center = math.sqrt(points[0][0] * points[0][0] + points[0][1] * points[0][1])
                                 distance = math.sqrt((light.position.x - planepts[0].x)*(light.position.x - planepts[0].x) + (light.position.y - planepts[0].y)*(light.position.y - planepts[0].y) + (light.position.z - planepts[0].z)*(light.position.z - planepts[0].z))
                                 if dist_from_center == 0:
@@ -372,12 +183,7 @@ class Graphics:
                                 b = face.shading_color[2] + (light.light_color.b/255) * brightness
                                 face.shading_color = (r, g, b)
 
-    def get_rendered_objects(self):
-        return self.rendered_objects
-    
-    def get_rendered_faces(self):
-        return self.rendered_faces
-
+    # Render 3D elements
     def render(self):
         t0 = time.perf_counter_ns()
         self.bake_lighting()
@@ -401,10 +207,10 @@ class Graphics:
 
                         # Lock Vertices For Static Objects
                         if obj.static:
-                            obj.vertices[obj.vertices.index(vertex)] = Vector3(x, y, z)
+                            obj.vertices[obj.vertices.index(vertex)] = base.Vector3(x, y, z)
                             obj.locked = True
 
-                    vertices.append(self.perspective(cam.position, cam.rotation, Vector3(x, y, z)))
+                    vertices.append(self.perspective(cam.position, cam.rotation, base.Vector3(x, y, z)))
 
                 self.rendered_faces = 0
                 for face in obj.faces:
@@ -415,11 +221,12 @@ class Graphics:
                     for index in face.indices:
                         x, y, z = vertices[index].x, vertices[index].y, vertices[index].z
                         
-                        if z < 0: # Do not render clipping or out-of-scope objects
+                        if z <= 0: # Do not render clipping or out-of-scope objects
                             show = False
                             break
+                        
                         points.append(((x * cam.focal_length/z+self.window.get_width()/2) * (self.window.get_width() / self.screen.fullwidth), (-y * cam.focal_length/z+self.window.get_height()/2)*(self.window.get_height() / self.screen.full)))
-                        planepts.append(Vector3(x, y, z))
+                        planepts.append(base.Vector3(x, y, z))
                         
                         depthval += z # add z to the sum of the z values
 
@@ -467,16 +274,18 @@ class Graphics:
         for text in self.debug_text_buffer:
             self.window.blit(text,(5,index * 20))
             index += 1
-        self.debug_text_buffer = []
         
         return time.perf_counter_ns() - t0
     
-    # Print string to the debug
-    def debug_log(self,string,font):
+    def reset_debug_buffer(self):
+        self.debug_text_buffer = []
+
+    # Print string to the debug buffer
+    def debug_to_screen(self,string,font):
         text = font.render(string,False,(0,0,0),(255,255,255))
         self.debug_text_buffer.append(text)
 
-                
+    # Render 2D UI elements
     def gui(self):
         t0 = time.perf_counter_ns()
         crosshairspread = self.speed * 100

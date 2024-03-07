@@ -20,10 +20,10 @@ fi
 # Check for pip
 echo "Downloading pip"
 sudo apt -qq install python3-pip
-sudo apt -qq update python3-pip
+sudo apt update python3-pip
 echo "Downloading python dependencies..."
 sudo apt -qq install python3-pygame
-sudo apt -qq update python3-pygame
+sudo apt update python3-pygame
 sudo apt -qq install python3-pillow
-sudo apt -qq update python3-pillow
+sudo apt update python3-pillow
 echo "Done."

@@ -5,7 +5,7 @@ from pygame.locals import *
 import json
 import time
 import graphics
-import helpers
+import fundamentals as base
 
 # Function definitions
 def rotate2D(x,y,r):
@@ -20,197 +20,9 @@ def rel_dir (str):
 
 # Class definitions
 
-# Triple tuple representing 3d coordinates, 3d rotation, 3d movement, etc.
-class Vector3:
-    x, y, z = 0, 0, 0
-
-    def __init__(self, x, y=0, z=0):
-        if (type(x) is int) | (type(x) is float):
-            self.x, self.y, self.z = x, y, z
-        elif type(x) is tuple:
-            self.x, self.y, self.z = x[0], x[1], x[2]
-
-    def to_tuple(self):
-        return (self.x, self.y, self.z)
-    
-    # Returns (x1-x2,y1-y2,z1-z2)
-    def subtract_by_vector(self,v3,set_this_vector):
-        v = Vector3(self.x-v3.x,self.y-v3.y,self.z-v3.z)
-        if set_this_vector:
-            self.x,self.y,self.z = v.x,v.y,v.z
-        return v
-    
-    # Returns (x1+x2,y1+y2,z1+z2)
-    def add_by_vector(self,v3,set_this_vector):
-        v = Vector3(self.x+v3.x,self.y+v3.y,self.z+v3.z)
-        if set_this_vector:
-            self.x,self.y,self.z = v.x,v.y,v.z
-        return v
-    
-    # Returns (x1*x2,y1*y2,z1*z2)
-    def multiply_by_vector(self,v3,set_this_vector):
-        v = Vector3(self.x*v3.x,self.y*v3.y,self.z*v3.z)
-        if set_this_vector:
-            self.x,self.y,self.z = v.x,v.y,v.z
-        return v
-    
-    # Returns (x1/x2,y1/y2,z1/z2)
-    def divide_by_vector(self,v3,set_this_vector):
-        v = Vector3(self.x/v3.x,self.y/v3.y,self.z/v3.z)
-        if set_this_vector:
-            self.x,self.y,self.z = v.x,v.y,v.z
-        return v
-    
-    # Returns (x1-n,y1-n,z1-n)
-    def subtract_by_num(self,num,set_this_vector):
-        v = Vector3(self.x-num,self.y-num,self.z-num)
-        if set_this_vector:
-            self.x,self.y,self.z = v.x,v.y,v.z
-        return v
-    
-    # Returns (x1+n,y1+n,z1+n)
-    def add_by_num(self,num,set_this_vector):
-        v = Vector3(self.x+num,self.y+num,self.z+num)
-        if set_this_vector:
-            self.x,self.y,self.z = v.x,v.y,v.z
-        return v
-    
-    # Returns (x1*n,y1*n,z1*n)
-    def multiply_by_num(self,num,set_this_vector):
-        v = Vector3(self.x*num,self.y*num,self.z*num)
-        if set_this_vector:
-            self.x,self.y,self.z = v.x,v.y,v.z
-        return v
-    
-    # Returns (x1/n,y1/n,z1/n)
-    def divide_by_num(self,num,set_this_vector):
-        v = Vector3(self.x/num,self.y/num,self.z/num)
-        if set_this_vector:
-            self.x,self.y,self.z = v.x,v.y,v.z
-        return v
-    
-    def rotate_by_euler(self,rotation):
-        self.y, self.z = rotate2D(self.y, self.z, rotation.x)
-        self.x, self.z = rotate2D(self.x, self.z, rotation.y)
-        self.x, self.y = rotate2D(self.x, self.y, rotation.z)
-        
-
-
-# Double tuple representing 2d coordinates, 2d rotation, 2d movement, etc.
-class Vector2:
-    x, y = 0, 0
-
-    def __init__(self, x, y=0):
-        if (type(x) is int) | (type(x) is float):
-            self.x, self.y = x, y
-        elif type(x) is tuple:
-            self.x, self.y = x[0], x[1]
-
-    def to_tuple(self):
-        return (self.x, self.y)
-
-class Screen:
-    full = 0
-    fullwidth = 0
-
-# Represents camera controlled by the cam.velocity
-class Camera:
-    position = Vector3(0,0,0)
-    rotation = Vector3(0,0,0) # x = rotation.y, y = rotation.x, z = roll
-    velocity = Vector3(0,0,0)
-    drag = 0.8
-    air_drag = 0.8
-    focal_length = 400
-
-class RGBColor:
-    r, g, b = 0, 0, 0
-
-    def __init__(self, r, g=0, b=0):
-        if type(r) is int:
-            self.r, self.g, self.b = r, g, b
-        elif type(r) is tuple:
-            self.r, self.g, self.b = r[0], r[1], r[2]
-
-    def to_tuple(self):
-        return(self.r, self.g, self.b)
-
-class Face:
-    color = RGBColor(0, 0, 0)
-    indices = (0,0,0)
-    shading_color = (0, 0, 0)
-    texture = False
-
-    def __init__(self, indices, color, texture=False):
-        self.indices = indices
-        self.color = color
-
-class BoxCollider:
-    id=0
-    isActive = True
-    isTouched = False
-    collisions = []
-    minvertex = Vector3(0,0,0) # opposite vertices
-    maxvertex = Vector3(1,1,1)
-
-# Represents the data of an object that the engine needs to process
-class Transform:
-    points = [] # List of Vector3s that represent the object's points
-    position = Vector3(0,0,0)
-    rotation = Vector3(0,0,0)
-    origin = Vector3(0,0,0)
-    collider = BoxCollider()
-
-class Object:
-    static = True
-    locked = False
-
-    id = ""
-    type = ""
-    position = Vector3(0,0,0)
-    orientation = Vector3(0, 0, 0)
-    origin = Vector3(0, 0, 0)
-    scale = Vector3(0, 0, 0)
-
-    wire_thickness = 0
-    wire_color = RGBColor(0,0,0)
-
-    visible = True
-    transparent = True
-
-    vertices = [] # List of all points as Vector3 
-    faces = [] # List of all faces as faces
-
-    light_color = RGBColor(0, 0, 0)
-    light_direction = Vector3(0, 0, 0)
-    light_spread = 0
-
-    velocity = Vector3(0, 0, 0)
-    dragFactor = 1
-
-    def __init__ (self, id, type, position, orientation, origin, scale, wire_thickness, visible, transparent, static, vertices, faces, light_color, light_direction, light_spread, textures):
-        self.id = id
-        self.type = type
-        self.position = position
-        self.orientation = orientation
-        self.origin = origin
-        self.scale = scale
-        self.wire_thickness = wire_thickness
-        self.visible = visible
-        self.transparent = transparent
-        self.static = static
-        self.vertices = vertices
-        self.faces = faces
-        self.light_color = light_color
-        self.light_direction = light_direction
-        self.light_spread = light_spread
-        self.textures = textures
-
-    def set_color (self, color): # Set the entire object to a color
-        for face in self.faces:
-            face.color = color
-
+# Collision Handling
 class Collision:
-    epicenter = Vector3(0,0,0)
+    epicenter = base.Vector3(0,0,0)
     otherCollider = None
 
 def sort_sweep_key(item):
@@ -298,6 +110,7 @@ class CollisionManager:
 class Engine:
     # Lists
     objects = []
+    debug_buffer = []
 
     # Booleans
     can_jump = True
@@ -348,14 +161,15 @@ class Engine:
         self.cam.air_drag = 0.85 # Actual camera aerial drag
 
         self.objects = self.load_objects(rel_dir("scene_path.json"))
-        self.graphics.objects = self.objects
+        self.graphics.objects = self.objects # Shares the objects with the renderer
 
+    # Loads the objects from JSON files
     def load_objects (self, path):
         objlist = []
         with open(path) as file:
             scene = json.load(file)
             g.bgcolor = tuple(scene["bg_color"])
-            g.ambient_light = RGBColor(tuple(scene["ambient"]))
+            g.ambient_light = base.RGBColor(tuple(scene["ambient"]))
             folder_path = rel_dir(scene["folder_path"])
             g.textures_path = rel_dir(scene["textures_path"])
         file.close()
@@ -364,26 +178,30 @@ class Engine:
                 obj = json.load(file)
                 vertices = []
                 for vertex in obj["vertices"]:
-                    vertices.append(Vector3(tuple(vertex)))
+                    vertices.append(base.Vector3(tuple(vertex)))
                 faces = []
                 for face in obj["faces"]:
-                    faces.append(Face((tuple(face[0])), RGBColor(tuple(face[1]))))
+                    faces.append(graphics.Face((tuple(face[0])), base.RGBColor(tuple(face[1]))))
                     #id, type, position, orientation, origin, scale, wire_thickness, visible, transparent, static, vertices, faces, light_color, light_direction, is_source, light_spread
-                objlist.append(Object(obj["name"], obj["type"], Vector3(tuple(obj["position"])), Vector3(tuple(obj["orientation"])), Vector3(tuple(obj["origin"])), Vector3(tuple(obj["scale"])), obj["wire_thickness"], obj["visible"], obj["transparent"], obj["static"], vertices, faces, RGBColor(tuple(obj["light"]["color"])), Vector3(tuple(obj["light"]["direction"])), obj["light"]["spread"], obj["textures"]))
+                objlist.append(base.Object(obj["name"], obj["type"], base.Vector3(tuple(obj["position"])), base.Vector3(tuple(obj["orientation"])), base.Vector3(tuple(obj["origin"])), base.Vector3(tuple(obj["scale"])), obj["wire_thickness"], obj["visible"], obj["transparent"], obj["static"], vertices, faces, base.RGBColor(tuple(obj["light"]["color"])), base.Vector3(tuple(obj["light"]["direction"])), obj["light"]["spread"], obj["textures"]))
             file.close()
         return objlist
 
+    # Update the game
     def update(self):
         t0 = time.perf_counter_ns()
+
+        # Handle collisions
         self.collision_manager.calculateCollisions()
         cam = self.cam
 
+        # Lock mouse in the middle
         if not self.paused:
             pygame.mouse.set_pos(self.window.get_width()/2, self.window.get_height()/2) #mouse "lock"
 
         # Update camera
         if (cam.position.y > 0): # In air
-            # Apply drag
+            # Apply air drag
             cam.velocity.x *= cam.air_drag
             cam.velocity.y *= cam.air_drag
             cam.velocity.z *= cam.air_drag
@@ -404,10 +222,18 @@ class Engine:
 
         if cam.position.y < 0:
             cam.position.y = 0
-
+        
+        # Update each object
         for obj in self.objects:
-            # Add to position by velocity & decrease velocity by the drag factor
-            #obj.transform.position.x,obj.transform.position.y,obj.transform.position.z = obj.velocity.x * obj.dragFactor,obj.velocity.y * obj.dragFactor,obj.velocity.z * obj.dragFactor
+            if not obj.on_update == None:
+                obj.on_update()
+
+            # !! Physics update !!
+            acceleration = base.Vector3(0,0,0)
+
+            obj.transform.velocity.add_by_vector(acceleration, True)
+            obj.transform.position.add_by_vector(obj.transform.velocity, True)
+
             pass
 
         return time.perf_counter_ns() - t0
@@ -417,17 +243,19 @@ class Engine:
         keys = pygame.key.get_pressed()
         cam = self.cam
 
-        #rotation
+        # rotation
         rel = pygame.mouse.get_rel()
 
         if not self.paused: # When unpaused
+            # Mouse sense
             cam.rotation.y += rel[0]*0.15
-            cam.rotation.x -= rel[1]*0.15 #mouse sense
-
-            cam.rotation.x = helpers.clamp(-90,90,cam.rotation.x)
+            cam.rotation.x -= rel[1]*0.15
+            cam.rotation.x = base.clamp(-90,90,cam.rotation.x)
             
+            # Renaming
             speed = self.speed
-            #movement
+
+            # Movement keys
             if keys[pygame.K_LSHIFT]: #sprinting
                 if speed < 0.05: # Smoothen acceleration to sprint speed
                     self.speed += 0.01
@@ -438,23 +266,23 @@ class Engine:
                     self.speed -= 0.005
                 if cam.focal_length < 400:
                     cam.focal_length += 10
-            if keys[pygame.K_w]:
+            if keys[pygame.K_w]: # Forward
                 cam.velocity.z += speed*math.cos(math.radians(cam.rotation.y))
                 cam.velocity.x += speed*math.sin(math.radians(cam.rotation.y))
-            if keys[pygame.K_s]:
+            if keys[pygame.K_s]: # Back
                 cam.velocity.z -= speed*math.cos(math.radians(cam.rotation.y))
                 cam.velocity.x -= speed*math.sin(math.radians(cam.rotation.y))
-            if keys[pygame.K_a]:
+            if keys[pygame.K_a]: # Left
                 cam.velocity.z -= speed*math.cos(math.radians(cam.rotation.y+90))
                 cam.velocity.x -= speed*math.sin(math.radians(cam.rotation.y+90))
-            if keys[pygame.K_d]:
+            if keys[pygame.K_d]: # Right
                 cam.velocity.z += speed*math.cos(math.radians(cam.rotation.y+90))
                 cam.velocity.x += speed*math.sin(math.radians(cam.rotation.y+90))
-            if keys[pygame.K_SPACE] and self.can_jump:
+            if keys[pygame.K_SPACE] and self.can_jump: # Jumping
                 cam.velocity.y += 0.8
                 self.can_jump = False
         else: # In pause menu
-            if keys[pygame.K_e]: #exits the game if e is pressed in pause
+            if keys[pygame.K_e]: # Exits the game if e is pressed in pause
                 self.active = False
 
             if keys[pygame.K_f]:
@@ -464,11 +292,14 @@ class Engine:
             else:
                 self.specsHeld = False
 
+        # Pause handling
         if keys[pygame.K_ESCAPE]:
-            if not self.pause_held: # Pause handling
+            if not self.pause_held: # So that down does not toggle repeatedly
                 self.pause_held = True
                 self.paused = not self.paused
                 pygame.mouse.set_visible(not pygame.mouse.get_visible())
+                
+                # Change the cursor if the menu is paused
                 if self.paused:
                     pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
                 else:
@@ -489,8 +320,6 @@ time_elapsed = 0 # Time since last frame
 last_timestamp = time.perf_counter() # Last timestamp collected
 tick = 0
 
-debug_data = []
-
 while engine.active:
     current_timestamp = time.perf_counter()
     time_elapsed += current_timestamp - last_timestamp # Add change in time to the time_elapsed
@@ -503,23 +332,24 @@ while engine.active:
             pass
         
         # Print elapsed time ever n frames
-        if g.frame % 20 == 0:
-            debug_data = []
-            debug_data.append(("time_since_last_frame(ms)",time_elapsed * 1000))
+        if g.frame % 20 == 0 and engine.specstog:
+            g.reset_debug_buffer()
+            g.debug_to_screen("time_since_last_frame(ms):" + str(round(time_elapsed * 1000)),engine.analytics_font)
 
             # Engine update
-            debug_data.append(("engine:control(us)",engine.handle_control()/1000))
-            debug_data.append(("engine:update(us)",engine.update()/1000))
+            g.debug_to_screen("engine:control(us):" + str(round(engine.handle_control()/1000)),engine.analytics_font)
+            g.debug_to_screen("engine:update(us):" + str(round(engine.update()/1000)),engine.analytics_font)
             
             # Render objects
-            debug_data.append(("graphics:render3D(us)",g.render()/1000))
+            g.debug_to_screen("graphics:render3D(us):" + str(round(g.render()/1000)),engine.analytics_font)
 
             # Render GUI
-            debug_data.append(("graphics:render2D(us)",g.gui()/1000))
+            g.debug_to_screen("graphics:render2D(us):" + str(round(g.gui()/1000)),engine.analytics_font)
             
-            debug_data.append(("graphics:render3D:faces",g.get_rendered_faces()))
-            debug_data.append(("graphics:render3D:objects",g.get_rendered_objects()))
-            debug_data.append(("fps",1/time_elapsed))
+            # Graphics data
+            g.debug_to_screen("graphics:render3D:faces:" + str((g.rendered_faces)),engine.analytics_font)
+            g.debug_to_screen("graphics:render3D:objects:" + str((g.rendered_objects)),engine.analytics_font)
+            g.debug_to_screen("fps:" + str(round(1/time_elapsed)), engine.analytics_font)
         else:
             # Engine update
             engine.handle_control()
@@ -535,9 +365,4 @@ while engine.active:
         pygame.display.flip() # Invert screen
         pygame.display.update() # Display new render
         time_elapsed = 0 # Reset elapsed time
-
-        # Add debug texts to the graphics render buffer
-        if engine.specstog:
-            for pair in debug_data: # (String label, int time_difference)
-                g.debug_log(pair[0] + ": " + str(round(pair[1],2)),engine.analytics_font)
 quit()
