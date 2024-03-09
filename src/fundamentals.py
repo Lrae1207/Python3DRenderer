@@ -174,19 +174,19 @@ class Object:
     def __init__ (self, id, type, position, orientation, origin, scale, wire_thickness, visible, transparent, static, vertices, faces, light_color, light_direction, light_spread, textures):
         self.id = id
         self.type = type
-        self.position = position
-        self.orientation = orientation
-        self.origin = origin
-        self.scale = scale
-        self.wire_thickness = wire_thickness
+        self.transform.position = position
+        self.transform.rotation = orientation
+        self.transform.origin = origin
+        self.rotationscale = scale
+        self.mesh.wire_thickness = wire_thickness
         self.visible = visible
-        self.transparent = transparent
+        self.mesh.transparent = transparent
         self.static = static
         self.vertices = vertices
         self.faces = faces
-        self.light_color = light_color
-        self.light_direction = light_direction
-        self.light_spread = light_spread
+        self.mesh.light_color = light_color
+        self.mesh.light_direction = light_direction
+        self.mesh.light_spread = light_spread
         self.textures = textures
 
     def set_color (self, color): # Set the entire object to a color

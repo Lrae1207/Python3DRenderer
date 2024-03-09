@@ -225,6 +225,8 @@ class Engine:
         
         # Update each object
         for obj in self.objects:
+            print(obj.transform.position.x,obj.transform.position.y,obj.transform.position.z)
+
             if not obj.on_update == None:
                 obj.on_update()
 
