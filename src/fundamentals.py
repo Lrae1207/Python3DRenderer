@@ -175,9 +175,9 @@ class Object:
         self.id = id
         self.type = type
         self.transform.position = position
-        self.transform.rotation = orientation
+        self.transform.orientation = orientation
         self.transform.origin = origin
-        self.rotationscale = scale
+        self.transform.scale = scale
         self.mesh.wire_thickness = wire_thickness
         self.visible = visible
         self.mesh.transparent = transparent
