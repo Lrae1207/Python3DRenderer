@@ -4,7 +4,7 @@ import time
 import os
 import platform
 from PIL import Image
-from ctypes import *
+import ctypes
 import fundamentals as base
     
 class Face:
@@ -69,18 +69,17 @@ class Graphics:
 
     def __init__(self,window):
         self.window = window
-        if platform.system() == "Linux": # SO only works on linux
-            graphics_accel = CDLL("./accel-linux/graphics.so")
+        #if platform.system() == "Linux": # SO only works on linux
+            #graphics_accel = ctypes.CDLL("./accel-linux/graphics.so")
     
     def accel_shoelace(self,pts):
-        x,y = zip(*pts)
-        if platform.system() == "Linux":
-            return self.graphics_accel.shoelace(x,y) # No clue if this actually works 
+        #if platform.system() == "Linux":
+            #x,y = zip(*pts)
+            #return self.graphics_accel.shoelace(x,y) # No clue if this actually works 
         return shoelace(pts)
 
     def apply_changes (self, obj, vertex):
         x, y, z = vertex.x, vertex.y, vertex.z
-
         t = obj.transform
 
         # Scaling
@@ -89,9 +88,9 @@ class Graphics:
         z *= t.scale.z
 
         # Rotation
-        y, z = rotate_point(y - t.origin.y, z - t.origin.z, math.radians(t.rotation.x))
-        x, z = rotate_point(x - t.origin.x, z - t.origin.z, math.radians(t.rotation.y))
-        x, y = rotate_point(x - t.origin.x, y - t.origin.y, math.radians(t.rotation.z))
+        y, z = rotate_point(y - t.origin.y, z - t.origin.z, math.radians(t.orientation.x))
+        x, z = rotate_point(x - t.origin.x, z - t.origin.z, math.radians(t.orientation.y))
+        x, y = rotate_point(x - t.origin.x, y - t.origin.y, math.radians(t.orientation.z))
         
         # Offset
         x += t.position.x
@@ -162,16 +161,13 @@ class Graphics:
                             points = []
                             planepts = []
                             for index in face.indices:
-                                x, y, z = vertices[index].x, vertices[index].y, vertices[index].z
-                                if z <= 0:
+                                x, y, z = vertices[index].x, vertices[index].y, vertices[index].z + 0.00000001
+                                if z < 0:
                                     show = False
-                                    break
                                 points.append(((x * light.mesh.light_spread/z), (-y * light.mesh.light_spread/z)))
                                 if (x * light.mesh.light_spread/z <= self.window.get_width()) & (y * light.mesh.light_spread/z <= self.window.get_height()):
                                     offscreen = False
                                 planepts.append(base.Vector3(x, y, z))
-                            if not show:
-                                continue
 
                             area = self.accel_shoelace(points)
                             if (area > 0) & ((not offscreen)):
@@ -183,7 +179,7 @@ class Graphics:
                                     brightness = area / distance / 10 / dist_from_center
                                 r = face.shading_color[0] + (light.mesh.light_color.r/255) * brightness
                                 g = face.shading_color[1] + (light.mesh.light_color.g/255) * brightness
-                                b = face.shading_color[2] + (light.meshlight_color.b/255) * brightness
+                                b = face.shading_color[2] + (light.mesh.light_color.b/255) * brightness
                                 face.shading_color = (r, g, b)
 
     # Render 3D elements
@@ -222,11 +218,10 @@ class Graphics:
                     depthval = 0
                     planepts = []
                     for index in face.indices:
-                        x, y, z = vertices[index].x, vertices[index].y, vertices[index].z
+                        x, y, z = vertices[index].x, vertices[index].y, vertices[index].z + 0.000000001
                         
-                        if z <= 0: # Do not render clipping or out-of-scope objects
+                        if z < 0: # Do not render clipping or out-of-scope objects
                             show = False
-                            break
                         
                         points.append(((x * cam.focal_length/z+self.window.get_width()/2) * (self.window.get_width() / self.screen.fullwidth), (-y * cam.focal_length/z+self.window.get_height()/2)*(self.window.get_height() / self.screen.full)))
                         planepts.append(base.Vector3(x, y, z))
