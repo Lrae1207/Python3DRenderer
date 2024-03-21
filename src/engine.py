@@ -173,6 +173,7 @@ class Engine:
             folder_path = rel_dir(scene["folder_path"])
             g.textures_path = rel_dir(scene["textures_path"])
         file.close()
+
         for objpath in scene["object_file_paths"]:
             with open(folder_path + objpath) as file:
                 obj = json.load(file)
@@ -183,8 +184,13 @@ class Engine:
                 for face in obj["faces"]:
                     faces.append(graphics.Face((tuple(face[0])), base.RGBColor(tuple(face[1]))))
                     #id, type, position, orientation, origin, scale, wire_thickness, visible, transparent, static, vertices, faces, light_color, light_direction, is_source, light_spread
+                b = base.Vector3(tuple(obj["position"]))
                 objlist.append(base.Object(obj["name"], obj["type"], base.Vector3(tuple(obj["position"])), base.Vector3(tuple(obj["orientation"])), base.Vector3(tuple(obj["origin"])), base.Vector3(tuple(obj["scale"])), obj["wire_thickness"], obj["visible"], obj["transparent"], obj["static"], vertices, faces, base.RGBColor(tuple(obj["light"]["color"])), base.Vector3(tuple(obj["light"]["direction"])), obj["light"]["spread"], obj["textures"]))
+                # upon adding to the list the object's fields are 0'd
             file.close()
+
+        for obj in objlist:
+            print(obj.transform.position.x,obj.transform.position.y,obj.transform.position.z)
         return objlist
 
     # Update the game
@@ -225,8 +231,6 @@ class Engine:
         
         # Update each object
         for obj in self.objects:
-            print(obj.transform.position.x,obj.transform.position.y,obj.transform.position.z)
-
             if not obj.on_update == None:
                 obj.on_update()
 
