@@ -155,29 +155,20 @@ class Transform:
 
 # Game Object
 class Object:
-    static = True
-    locked = False
-
-    id = ""
-    type = ""
-
-    visible = True
-
-    vertices = [] # List of all points as Vector3 
-    faces = [] # List of all faces as faces
-    
-    mesh = MeshColor()
-    transform = Transform()
-
     on_update = None
+    locked = False
 
     def __init__ (self, id, type, position, orientation, origin, scale, wire_thickness, visible, transparent, static, vertices, faces, light_color, light_direction, light_spread, textures):
         self.id = id
         self.type = type
+
+        self.transform = Transform()
         self.transform.position = position
-        self.transform.orientation = orientation
+        self.transform.rotation = orientation
         self.transform.origin = origin
         self.transform.scale = scale
+
+        self.mesh = MeshColor()
         self.mesh.wire_thickness = wire_thickness
         self.visible = visible
         self.mesh.transparent = transparent

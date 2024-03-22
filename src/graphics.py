@@ -88,9 +88,9 @@ class Graphics:
         z *= t.scale.z
 
         # Rotation
-        y, z = rotate_point(y - t.origin.y, z - t.origin.z, math.radians(t.orientation.x))
-        x, z = rotate_point(x - t.origin.x, z - t.origin.z, math.radians(t.orientation.y))
-        x, y = rotate_point(x - t.origin.x, y - t.origin.y, math.radians(t.orientation.z))
+        y, z = rotate_point(y - t.origin.y, z - t.origin.z, math.radians(t.rotation.x))
+        x, z = rotate_point(x - t.origin.x, z - t.origin.z, math.radians(t.rotation.y))
+        x, y = rotate_point(x - t.origin.x, y - t.origin.y, math.radians(t.rotation.z))
         
         # Offset
         x += t.position.x
