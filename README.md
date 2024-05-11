@@ -18,4 +18,5 @@ Windows 10 OS:
 
 Progress as of 14/12/2023:
 ChromeOS:
+
 ![alt text](https://github.com/Lrae1207/Python3DRenderer-Workspace/blob/main/images/light-dev.png?raw=true)
