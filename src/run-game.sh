@@ -1,7 +1,8 @@
 #!/bin/bash
-# Linux only
+# Linux only/run by sudo
 # Check for dependencies
-./scripts/download-dependencies.sh
+chmod +x ./scripts/download-dependencies.sh
+sudo ./scripts/download-dependencies.sh
 
 if [ $? -eq 0 ]
 then
