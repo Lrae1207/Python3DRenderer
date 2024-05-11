@@ -13,8 +13,8 @@ Demo/Development Media:
 
 Progress as of 25/11/2023:
 Windows 10 OS:
-![alt text](https://github.com/Lrae1207/Python3DRenderer-OptimizationPrototype/blob/main/images/Dev-Early0.png?raw=true)
-![alt text](https://github.com/Lrae1207/Python3DRenderer-OptimizationPrototype/blob/main/images/Dev-Early1.png?raw=true)
+![alt text](https://github.com/Lrae1207/Python3DRenderer-Workspace/blob/main/images/Dev-Early0.png?raw=true)
+![alt text](https://github.com/Lrae1207/Python3DRenderer-Workspace/blob/main/images/Dev-Early1.png?raw=true)
 
 Progress as of 14/12/2023:
 ChromeOS:
