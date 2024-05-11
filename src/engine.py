@@ -18,95 +18,6 @@ def rel_dir (str):
     else:
         return os.path.dirname(__file__) + "/" + str
 
-# Class definitions
-
-# Collision Handling
-class Collision:
-    epicenter = base.Vector3(0,0,0)
-    otherCollider = None
-
-def sort_sweep_key(item):
-    return item[0]
-
-class CollisionManager:
-    colliders = []
-
-    def broad_sort_sweep(self,colliders): # Sort and sweep broad phase algorithm
-        collision_pairs = []
-
-        xpoints = []
-        ypoints = []
-        zpoints = []
-        
-        # Add each minimum and maximum extrusion on the XYZ axes to their respective arrays and then sort the array by their value along the axis
-        for collider in colliders:
-            point = (collider.minvertex[0],collider.id)
-            xpoints.append(point)
-            point = (collider.minvertex[1],collider.id)
-            ypoints.append(point)
-            point = (collider.minvertex[2],collider.id)
-            zpoints.append(point)
-
-            point = (collider.maxvertex[0],collider.id)
-            xpoints.append(point)
-            point = (collider.maxvertex[1],collider.id)
-            ypoints.append(point)
-            point = (collider.maxvertex[2],collider.id)
-            zpoints.append(point)
-
-            xpoints.sort(key=sort_sweep_key)
-            ypoints.sort(key=sort_sweep_key)
-            zpoints.sort(key=sort_sweep_key)
-        
-        relevant_x_ids = []
-        relevant_y_ids = []
-        relevant_z_ids = []
-
-        for x in xpoints:
-            if x[1] in relevant_x_ids: # If the id of the current point is the "end point" (has a higher value along the axis)
-                relevant_x_ids.remove(x[1])
-            else: # If the id of the current point is the "start point" (has a lower value along the axis)
-                relevant_x_ids.append(x[1])
-
-            for id in relevant_x_ids: # For every object whose end point has not been encountered yet
-                if id > x[1]: # Put the higher id first so that removing duplicates is easier
-                    collision_pairs.append((id,x[1]))
-                else:
-                    collision_pairs.append((x[1],id))
-
-        for y in ypoints:
-            if y[1] in relevant_y_ids: # If the id of the current point is the "end point" (has a higher value along the axis)
-                relevant_y_ids.remove(y[1])
-            else: # If the id of the current point is the "start point" (has a lower value along the axis)
-                relevant_y_ids.append(y[1])
-
-            for id in relevant_y_ids: # For every object whose end point has not been encountered yet
-                if id > y[1]: # Put the higher id first so that removing duplicates is easier
-                    collision_pairs.append((id,y[1]))
-                else:
-                    collision_pairs.append((y[1],id))
-
-        for z in zpoints:
-            if z[1] in relevant_z_ids: # If the id of the current point is the "end point" (has a higher value along the axis)
-                relevant_z_ids.remove(z[1])
-            else: # If the id of the current point is the "start point" (has a lower value along the axis)
-                relevant_z_ids.append(z[1])
-
-            for id in relevant_z_ids: # For every object whose end point has not been encountered yet
-                if id > z[1]: # Put the higher id first so that removing duplicates is easier
-                    collision_pairs.append((id,z[1]))
-                else:
-                    collision_pairs.append((z[1],id))
-
-        return list(set(collision_pairs)) # Remove duplicates
-
-
-
-
-    def calculateCollisions(self):
-        # Broad phase
-        possible_collisions = self.broad_sort_sweep(self.colliders)
-
 class Engine:
     # Lists
     objects = []
@@ -129,7 +40,6 @@ class Engine:
     cam = None
     graphics = None
     window = None
-    collision_manager = CollisionManager()
 
     def __init__(self, graphics):
         self.graphics = graphics
@@ -192,9 +102,6 @@ class Engine:
     # Update the game
     def update(self):
         t0 = time.perf_counter_ns()
-
-        # Handle collisions
-        self.collision_manager.calculateCollisions()
         cam = self.cam
 
         # Lock mouse in the middle
