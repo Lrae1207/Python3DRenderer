@@ -1,5 +1,5 @@
-# Only tested on linux
-
+#!/bin/bash
+# Linux only
 # Check for dependencies
 ./scripts/download-dependencies.sh
 

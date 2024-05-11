@@ -1,3 +1,6 @@
+#!/bin/bash
+# Linux only
+
 # Linux shell script to download python dependencies
 depmissing=false
 
