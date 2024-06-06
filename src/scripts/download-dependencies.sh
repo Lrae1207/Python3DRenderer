@@ -24,19 +24,19 @@ fi
 # Check for pip
 echo "Downloading pip..."
 apt install -y python3-pip > /dev/null
-apt update -y python3-pip > /dev/null
+apt update python3-pip > /dev/null
 
 echo "Downloading python dependencies..."
 
 echo "Downloading python3-pygame..."
 apt install -y python3-pygame > /dev/null
 pip install pygame --upgrade > /dev/null
-apt update -y python3-pygame > /dev/null
+apt update python3-pygame > /dev/null
 echo "Download complete."
 
 echo "Downloading python3-pillow..."
 apt install -y python3-pillow > /dev/null
-apt update -y python3-pillow > /dev/null
+apt update python3-pillow > /dev/null
 echo "Download complete."
 
 echo "Done."
