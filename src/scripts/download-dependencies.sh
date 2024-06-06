@@ -30,6 +30,7 @@ echo "Downloading python dependencies..."
 
 echo "Downloading python3-pygame..."
 apt install -y python3-pygame > /dev/null
+pip install pygame --upgrade > /dev/null
 apt update -y python3-pygame > /dev/null
 echo "Download complete."
 
